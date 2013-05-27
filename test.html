@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+	<head>
+		<title>TGA - Loader</title>
+		<script type="text/javascript" src="tga.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var tga = new TGA();
+			tga.open( "test.tga", function(data){
+				var canvas = tga.getCanvas();
+				document.body.appendChild(canvas);
+			});
+		</script>
+	</body>
+</html>
