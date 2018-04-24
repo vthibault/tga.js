@@ -83,7 +83,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 		// Indexed type
 		if (header.hasColorMap) {
-			if (header.colorMapLength > 256 || header.colorMapType !== 1) {
+			if (header.colorMapLength > 256 || header.colorMapDepth !== 24 || header.colorMapType !== 1) {
 				throw new Error('Targa::checkHeader() - Invalid colormap for indexed type');
 			}
 		}
