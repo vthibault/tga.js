@@ -1,3 +1,4 @@
+/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "^(TYPE|ORIGIN)_" }]*/
 'use strict';
 
 /**
@@ -25,7 +26,7 @@ const ORIGIN_MASK = 0x30;
  * TGA Namespace
  * @constructor
  */
-export default class Tga {
+export default class TgaLoader {
   /**
    * Check the header of TGA file to detect errors
    *
@@ -114,7 +115,7 @@ export default class Tga {
           output[pos + i] = data[offset + i];
         }
 
-        i += count;
+        pos += count;
         offset += count;
       }
     }
@@ -374,9 +375,9 @@ export default class Tga {
    * @public
    */
   open(path, callback) {
-    req = new XMLHttpRequest();
-    req.open('GET', path, true);
+    const req = new XMLHttpRequest();
     req.responseType = 'arraybuffer';
+    req.open('GET', path, true);
     req.onload = () => {
       if (this.status === 200) {
         this.load(new Uint8Array(req.response));
@@ -452,7 +453,7 @@ export default class Tga {
 
     if (header.hasEncoding) {
       // RLE encoded
-      this.imageData = this_.decodeRLE(data, offset, pixelSize, pixelTotal);
+      this.imageData = this._decodeRLE(data, offset, pixelSize, pixelTotal);
     } else {
       // RAW pixels
       this.imageData = data.subarray(
@@ -469,11 +470,10 @@ export default class Tga {
    * @returns {object} imageData
    */
   getImageData(imageData) {
-    var width = this.header.width;
-    var height = this.header.height;
-    var origin = (this.header.flags & ORIGIN_MASK) >> ORIGIN_SHIFT;
-    var x_start, x_step, x_end, y_start, y_step, y_end;
-    var getImageData;
+    const { width, height, flags, pixelDepth, isGreyColor } = this.header;
+    const origin = (flags & ORIGIN_MASK) >> ORIGIN_SHIFT;
+    let x_start, x_step, x_end, y_start, y_step, y_end;
+    let getImageData;
 
     // Create an imageData
     if (!imageData) {
@@ -515,15 +515,15 @@ export default class Tga {
 
     // TODO: use this.header.offsetX and this.header.offsetY ?
 
-    switch (this.header.pixelDepth) {
+    switch (pixelDepth) {
       case 8:
-        getImageData = this.header.isGreyColor
+        getImageData = isGreyColor
           ? this._getImageDataGrey8bits
           : this._getImageData8bits;
         break;
 
       case 16:
-        getImageData = this.header.isGreyColor
+        getImageData = isGreyColor
           ? this._getImageDataGrey16bits
           : this._getImageData16bits;
         break;
@@ -560,14 +560,13 @@ export default class Tga {
    * @returns {object} CanvasElement
    */
   getCanvas() {
-    var canvas, ctx, imageData;
+    const { width, height } = this.header;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const imageData = ctx.createImageData(width, height);
 
-    canvas = document.createElement('canvas');
-    ctx = canvas.getContext('2d');
-    imageData = ctx.createImageData(this.header.width, this.header.height);
-
-    canvas.width = this.header.width;
-    canvas.height = this.header.height;
+    canvas.width = width;
+    canvas.height = height;
 
     ctx.putImageData(this.getImageData(imageData), 0, 0);
 
@@ -577,7 +576,7 @@ export default class Tga {
   /**
    * Return a dataURI of the TGA file
    *
-   * @param {string} type - Optional image content-type to output (default: image/png)
+   * @param {string?} type - Optional image content-type to output (default: image/png)
    * @returns {string} url
    */
   getDataURL(type) {

@@ -22,7 +22,7 @@ const bannerPlugin = {
 const exportFormat = format => ({
   input: `src/tga.js`,
   output: {
-    name,
+    name: 'TgaLoader',
     file: `dist/${format}/tga.js`,
     format,
   },

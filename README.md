@@ -12,7 +12,7 @@
 
 ---
 
-## 🔗Used by :
+## 🔗 Used by :
 
 - [ThreeJS](https://threejs.org/) 3D Engine
 - [BabylonJS](https://www.babylonjs.com/) 3D Engine
@@ -48,7 +48,7 @@ tga.open('./assets/resource.tga', () => {
 });
 ```
 
-#### Loading a tga from format.
+#### Loading a tga from buffer.
 
 ```js
 import TgaLoader from 'tga-js';
@@ -60,4 +60,10 @@ const buffer = getImageBufferFromCache('resource/data');
 
 tga.load(new UInt8Array(buffer));
 document.body.appendChild(tga.getCanvas());
+```
+
+#### Get data-uri as output
+
+```js
+tga.getDataURL('image/png');
 ```
