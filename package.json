@@ -1,0 +1,49 @@
+{
+  "name": "tga-js",
+  "version": "1.0.0",
+  "description": "A javascript tga loader from browser and node.js",
+  "author": "Vincent Thibault <vthibault.mobile@gmail.com>",
+  "license": "MIT",
+  "main": "./dist/cjs/tga.js",
+  "module": "./dist/esm/tga.js",
+  "browser": {
+    "./dist/cjs/tga.js": "./dist/umd/tga.js"
+  },
+  "files": [
+    "dist/"
+  ],
+  "bugs": {
+    "url": "https://github.com/vthibault/tga.js/issues"
+  },
+  "repository": "github:vthibault/tga.js",
+  "scripts": {
+    "lint": "eslint src/*.js test/*.js",
+    "test": "mocha --require @babel/register --recursive test",
+    "build": "del dist && npm run update-license && rollup -c",
+    "update-license": "node utils/update-license.js"
+  },
+  "keywords": [
+    "tga",
+    "tga.js",
+    "tga-js",
+    "tga-parser",
+    "tga-loader",
+    "image",
+    "loader"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/register": "^7.0.0",
+    "chai": "^4.2.0",
+    "del-cli": "^1.1.0",
+    "eslint": "^5.12.1",
+    "eslint-config-prettier": "^4.0.0",
+    "mocha": "^5.2.0",
+    "rollup": "^1.1.2",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-terser": "^4.0.3"
+  }
+}
