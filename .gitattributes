@@ -1,6 +1,6 @@
 * text=auto
-/dist/cjs/frenchkiss.js binary
-/dist/esm/frenchkiss.js binary
-/dist/umd/frenchkiss.js binary
+/dist/cjs/tga.js binary
+/dist/esm/tga.js binary
+/dist/umd/tga.js binary
 /package-lock.json binary
 /yarn.lock binary
