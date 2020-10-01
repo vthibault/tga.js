@@ -379,7 +379,7 @@ export default class TgaLoader {
     req.responseType = 'arraybuffer';
     req.open('GET', path, true);
     req.onload = () => {
-      if (this.status === 200) {
+      if (req.status === 200) {
         this.load(new Uint8Array(req.response));
         if (callback) {
           callback();
