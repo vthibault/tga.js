@@ -45,7 +45,10 @@ export default class TgaLoader {
     if (header.hasColorMap) {
       if (
         header.colorMapLength > 256 ||
-        header.colorMapDepth !== 24 ||
+        (header.colorMapDepth !== 15 &&
+          header.colorMapDepth !== 16 &&
+          header.colorMapDepth !== 24 &&
+          header.colorMapDepth !== 32) ||
         header.colorMapType !== 1
       ) {
         throw new Error('Invalid colormap for indexed type');
@@ -117,6 +120,34 @@ export default class TgaLoader {
 
         pos += count;
         offset += count;
+      }
+    }
+
+    return output;
+  }
+
+  /**
+   * Convert a colormap with 15, 16 or 32 bits entries to 24 bits (BGR)
+   *
+   * @param {Uint8Array} colormap
+   * @param {number} entrySize - bytes per entry (2 or 4)
+   * @returns {Uint8Array} the 24 bits colormap
+   * @private
+   */
+  _getColormap24bits(colormap, entrySize) {
+    const count = Math.floor(colormap.length / entrySize);
+    const output = new Uint8Array(count * 3);
+
+    for (let i = 0; i < count; i++) {
+      if (entrySize === 2) {
+        const color = colormap[i * 2 + 0] | (colormap[i * 2 + 1] << 8);
+        output[i * 3 + 0] = (color & 0x001f) << 3;
+        output[i * 3 + 1] = (color & 0x03e0) >> 2;
+        output[i * 3 + 2] = (color & 0x7c00) >> 7;
+      } else {
+        output[i * 3 + 0] = colormap[i * 4 + 0];
+        output[i * 3 + 1] = colormap[i * 4 + 1];
+        output[i * 3 + 2] = colormap[i * 4 + 2];
       }
     }
 
@@ -442,9 +473,14 @@ export default class TgaLoader {
 
     // Read palette
     if (header.hasColorMap) {
-      const colorMapSize = header.colorMapLength * (header.colorMapDepth >> 3);
+      const entrySize = (header.colorMapDepth + 7) >> 3;
+      const colorMapSize = header.colorMapLength * entrySize;
       this.palette = data.subarray(offset, offset + colorMapSize);
       offset += colorMapSize;
+
+      if (entrySize !== 3) {
+        this.palette = this._getColormap24bits(this.palette, entrySize);
+      }
     }
 
     const pixelSize = header.pixelDepth >> 3;
